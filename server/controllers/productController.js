@@ -1,0 +1,453 @@
+// import { ProductModel } from "../models/Product.js";
+// import TryCatch from "../utils/tryCatch.js";
+// import bufferGenerator from "../utils/bufferGenerator.js";
+// // import cloudinary from "cloudinary";
+// import { v2 as cloudinary } from "cloudinary";
+
+// export const createProduct = TryCatch(async (req, res) => {
+//   if (req.user.role !== "admin")
+//     return res.status(403).json({
+//       message: "You are not admin",
+//     });
+
+//   const { title, about, category, price, stock } = req.body;
+
+//   const files = req.files;
+//   console.log(req.files);
+
+//   if (!files || files.length === 0)
+//     return res.status(400).json({
+//       message: "no files to upload",
+//     });
+
+//   const imageUploadPromises = files.map(async (file) => {
+//     console.log("1");
+
+//     const fileBuffer = bufferGenerator(file);
+//     console.log("2");
+
+//     try {
+//       const result = await cloudinary.uploader.upload(fileBuffer.content, {
+//         resource_type: "image",
+//       });
+
+//       console.log(result);
+//       return {
+//         id: result.public_id,
+//         url: result.secure_url,
+//       };
+//     } catch (error) {
+//       console.log("Cloudinary Error:", error);
+//     }
+//   });
+
+//   const uploadedImage = await Promise.all(imageUploadPromises);
+//   console.log(uploadedImage);
+//   const product = await ProductModel.create({
+//     title,
+//     about,
+//     category,
+//     price,
+//     stock,
+//     images: uploadedImage,
+//   });
+
+//   res.status(201).json({
+//     message: "Product Created",
+//     product,
+//   });
+// });
+
+// // export const getAllProducts = TryCatch(async (req, res) => {
+// //   const { search, category, page, sortByPrice } = req.query;
+
+// //   const filter = {};
+
+// //   if (search) {
+// //     filter.title = {
+// //       $regex: search,
+// //       $options: "i",
+// //     };
+// //   }
+
+// //   if (category) {
+// //     filter.category = category;
+// //   }
+
+// //   const limit = 8;
+
+// //   const skip = (page - 1) * limit;
+
+// //   let sortOption = { createdAt: -1 };
+
+// //   if (sortByPrice) {
+// //     if (sortByPrice === "lowToHigh") {
+// //       sortOption = { price: 1 };
+// //     } else if (sortByPrice === "highToLow") {
+// //       sortOption = { price: -1 };
+// //     }
+// //   }
+
+// //   const products = await Product.find(filter)
+// //     .sort(sortOption)
+// //     .limit(limit)
+// //     .skip(skip);
+
+// //   const categories = await Product.distinct("category");
+
+// //   const newProduct = await Product.find().sort("-createdAt").limit(4);
+
+// //   const countProduct = await Product.countDocuments();
+
+// //   const totalPages = Math.ceil(countProduct / limit);
+
+// //   res.json({ products, categories, totalPages, newProduct });
+// // });
+
+// // export const getSingleProduct = TryCatch(async (req, res) => {
+// //   const product = await Product.findById(req.params.id);
+
+// //   const relatedProduct = await Product.find({
+// //     category: product.category,
+// //     _id: { $ne: product._id },
+// //   }).limit(4);
+
+// //   res.json({ product, relatedProduct });
+// // });
+
+// // export const updateProduct = TryCatch(async (req, res) => {
+// //   if (req.user.role !== "admin")
+// //     return res.status(403).json({
+// //       message: "You are not admin",
+// //     });
+
+// //   const { title, about, category, price, stock } = req.body;
+
+// //   const updateFields = {};
+
+// //   if (title) updateFields.title = title;
+// //   if (about) updateFields.about = about;
+// //   if (stock) updateFields.stock = stock;
+// //   if (price) updateFields.price = price;
+// //   if (category) updateFields.category = category;
+
+// //   const updatedProduct = await Product.findByIdAndUpdate(
+// //     req.params.id,
+// //     updateFields,
+// //     { new: true, runValidators: true }
+// //   );
+
+// //   if (!updatedProduct)
+// //     return res.status(404).json({
+// //       message: "Product not found",
+// //     });
+
+// //   res.json({
+// //     message: "Product Updated",
+// //     updatedProduct,
+// //   });
+// // });
+
+// // export const updateProductImage = TryCatch(async (req, res) => {
+// //   if (req.user.role !== "admin")
+// //     return res.status(403).json({
+// //       message: "You are not admin",
+// //     });
+
+// //   const { id } = req.params;
+// //   const files = req.files;
+
+// //   if (!files || files.length === 0)
+// //     return res.status(400).json({
+// //       message: "no files to upload",
+// //     });
+
+// //   const product = await Product.findById(id);
+
+// //   if (!product)
+// //     return res.status(404).json({
+// //       message: "Product not found",
+// //     });
+
+// //   const oldImages = product.images || [];
+
+// //   for (const img of oldImages) {
+// //     if (img.id) {
+// //       await cloudinary.v2.uploader.destroy(img.id);
+// //     }
+// //   }
+
+// //   const imageUploadPromises = files.map(async (file) => {
+// //     const fileBuffer = bufferGenerator(file);
+
+// //     const result = await cloudinary.v2.uploader.upload(fileBuffer.content);
+
+// //     return {
+// //       id: result.public_id,
+// //       url: result.secure_url,
+// //     };
+// //   });
+
+// //   const uploadedImage = await Promise.all(imageUploadPromises);
+
+// //   product.images = uploadedImage;
+
+// //   await product.save();
+
+// //   res.status(200).json({
+// //     message: "Image updated",
+// //     product,
+// //   });
+// // });
+
+/////////////////////////////////////////////////////////////////////////
+// import { ProductModel } from "../models/Product.js";
+// import TryCatch from "../utils/tryCatch.js";
+// import bufferGenerator from "../utils/bufferGenerator.js";
+// // import cloudinary from "cloudinary";
+// import { v2 as cloudinary } from "cloudinary";
+
+// export const createProduct = TryCatch(async (req, res) => {
+//   if (req.user.role !== "admin")
+//     return res.status(403).json({
+//       message: "You are not admin",
+//     });
+
+//   const { title, about, category, price, stock } = req.body;
+
+//   const files = req.files;
+//   console.log(req.files);
+
+//   if (!files || files.length === 0)
+//     return res.status(400).json({
+//       message: "no files to upload",
+//     });
+
+//   const imageUploadPromises = files.map(async (file) => {
+//     console.log("1");
+
+//     try {
+//       const result = await cloudinary.uploader.upload(file.path, {
+//         resource_type: "image",
+//       });
+//       console.log(result);
+//       return {
+//         id: result.public_id,
+//         url: result.secure_url,
+//       };
+//     } catch (error) {
+//       console.log("Cloudinary Error:", error);
+//     }
+//   });
+
+//   const uploadedImage = await Promise.all(imageUploadPromises);
+//   console.log(uploadedImage);
+//   const product = await ProductModel.create({
+//     title,
+//     about,
+//     category,
+//     price,
+//     stock,
+//     images: uploadedImage,
+//   });
+
+//   res.status(201).json({
+//     message: "Product Created",
+//     product,
+//   });
+// });
+/////////////////////////
+
+//////////////////////////////////////////
+
+// import { ProductModel } from "../models/Product.js";
+// import TryCatch from "../utils/tryCatch.js";
+// import { v2 as cloudinary } from "cloudinary";
+
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
+// console.log("Cloudinary Configured:", {
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET ? "****" : "Not Set",
+// });
+
+// export const createProduct = TryCatch(async (req, res) => {
+//   if (!req.user || req.user.role !== "admin") {
+//     return res.status(403).json({
+//       message: "You are not admin",
+//     });
+//   }
+
+//   const { title, about, category, price, stock } = req.body;
+//   const files = req.files;
+
+//   if (!files || files.length === 0) {
+//     return res.status(400).json({
+//       message: "No files to upload",
+//     });
+//   }
+
+//   const imageUploadPromises = files.map(async (file) => {
+//     return new Promise((resolve, reject) => {
+//       const uploadStream = cloudinary.uploader.upload_stream(
+//         {
+//           resource_type: "auto",
+//           folder: "products",
+//         },
+//         (error, result) => {
+//           if (error) {
+//             console.error("Stream Error:", error);
+//             reject(error);
+//           } else {
+//             console.log("Upload Success:", result.public_id);
+//             resolve({
+//               id: result.public_id,
+//               url: result.secure_url,
+//             });
+//           }
+//         },
+//       );
+
+//       // Pipe the buffer to the upload stream
+//       uploadStream.end(file.buffer);
+//     });
+//   });
+
+//   try {
+//     const uploadedImage = await Promise.all(imageUploadPromises);
+//     console.log("All images uploaded:", uploadedImage);
+
+//     const product = await ProductModel.create({
+//       title,
+//       about,
+//       category,
+//       price,
+//       stock,
+//       images: uploadedImage,
+//     });
+
+//     res.status(201).json({
+//       message: "Product Created Successfully",
+//       product,
+//     });
+//   } catch (error) {
+//     console.error("Product creation error:", error);
+//     res.status(500).json({
+//       message: "Error uploading images",
+//       error: error.message,
+//     });
+//   }
+// });
+// /////testing
+
+import { ProductModel } from "../models/Product.js";
+import TryCatch from "../utils/tryCatch.js";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+// console.log("Cloudinary Configured:", {
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET ? "****" : "Not Set",
+// });
+
+export const createProduct = TryCatch(async (req, res) => {
+  if (!req.user || req.user.role !== "admin") {
+    return res.status(403).json({
+      message: "You are not admin",
+    });
+  }
+
+  const { title, about, category, price, stock } = req.body;
+  const files = req.files;
+
+  console.log("Starting upload for", files?.length, "files");
+
+  if (!files || files.length === 0) {
+    return res.status(400).json({
+      message: "No files to upload",
+    });
+  }
+
+  const imageUploadPromises = files.map((file) => {
+    return new Promise((resolve, reject) => {
+      console.log(`Uploading file: ${file.originalname}, Size: ${file.size}`);
+
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          resource_type: "auto",
+          folder: "products",
+          timeout: 60000, // 60 seconds timeout ✅ ADDED HERE
+        },
+        (error, result) => {
+          if (error) {
+            console.error("Cloudinary Upload Error:", {
+              message: error.message,
+              status: error.status,
+              http_code: error.http_code,
+            });
+            reject(error);
+          } else {
+            console.log("Upload Success:", result.public_id);
+            resolve({
+              id: result.public_id,
+              url: result.secure_url,
+            });
+          }
+        },
+      );
+
+      // Add error listener to stream ✅ ADDED HERE
+      uploadStream.on("error", (err) => {
+        console.error("Stream Error Event:", err.message);
+        reject(err);
+      });
+
+      // Add timeout listener ✅ ADDED HERE
+      uploadStream.on("timeout", () => {
+        console.error("Upload timeout for file:", file.originalname);
+        reject(new Error("Upload timeout"));
+      });
+
+      console.log("Sending buffer to Cloudinary...");
+      uploadStream.end(file.buffer);
+    });
+  });
+
+  try {
+    console.log("Waiting for all uploads to complete...");
+    const uploadedImage = await Promise.all(imageUploadPromises);
+    console.log("All images uploaded successfully:", uploadedImage);
+
+    const product = await ProductModel.create({
+      title,
+      about,
+      category,
+      price,
+      stock,
+      images: uploadedImage,
+    });
+
+    res.status(201).json({
+      message: "Product Created Successfully",
+      product,
+    });
+  } catch (error) {
+    console.error("Product creation error:", {
+      message: error.message,
+      stack: error.stack,
+    });
+    res.status(500).json({
+      message: "Error uploading images",
+      error: error.message,
+    });
+  }
+});

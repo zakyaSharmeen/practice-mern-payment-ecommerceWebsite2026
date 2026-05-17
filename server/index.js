@@ -2,24 +2,22 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDb from "./utils/db.js";
-import cloudinary from "cloudinary";
+// import cloudinary from "cloudinary";
+
+//routes
 import userRoutes from "./routes/userRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 dotenv.config({ quiet: true });
-
-///image
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const port = process.env.PORT || 5000;
+// routes
 app.use("/api", userRoutes);
+app.use("/api", productRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
