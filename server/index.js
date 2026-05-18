@@ -7,6 +7,7 @@ import connectDb from "./utils/db.js";
 //routes
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
 
 dotenv.config({ quiet: true });
 
@@ -18,7 +19,7 @@ const port = process.env.PORT || 5000;
 // routes
 app.use("/api", userRoutes);
 app.use("/api", productRoutes);
-
+app.use("/api", cartRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
