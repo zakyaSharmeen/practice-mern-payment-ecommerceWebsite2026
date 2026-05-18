@@ -92,46 +92,46 @@ export const getMyOrder = TryCatch(async (req, res) => {
   res.json(order);
 });
 
-// export const updateStatus = TryCatch(async (req, res) => {
-//   if (req.user.role !== "admin") {
-//     return res.status(403).json({
-//       message: "you are not admin",
-//     });
-//   }
+export const updateStatus = TryCatch(async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({
+      message: "you are not admin",
+    });
+  }
 
-//   const order = await OrderModel.findById(req.params.id);
+  const order = await OrderModel.findById(req.params.id);
 
-//   const { status } = req.body;
+  const { status } = req.body;
 
-//   order.status = status;
+  order.status = status;
 
-//   await order.save();
+  await order.save();
 
-//   res.json({
-//     message: "order status updated",
-//     order,
-//   });
-// });
+  res.json({
+    message: "order status updated",
+    order,
+  });
+});
 
-// export const getStats = TryCatch(async (req, res) => {
-//   if (req.user.role !== "admin") {
-//     return res.status(403).json({
-//       message: "you are not admin",
-//     });
-//   }
-//   const cod = await OrderModel.find({ method: "cod" }).countDocuments();
-//   const online = await OrderModel.find({ method: "online" }).countDocuments();
+export const getStats = TryCatch(async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({
+      message: "you are not admin",
+    });
+  }
+  const cod = await OrderModel.find({ method: "cod" }).countDocuments();
+  const online = await OrderModel.find({ method: "online" }).countDocuments();
 
-//   const products = await ProductModel.find();
+  const products = await ProductModel.find();
 
-//   const data = products.map((prod) => ({
-//     name: prod.title,
-//     sold: prod.sold,
-//   }));
+  const data = products.map((prod) => ({
+    name: prod.title,
+    sold: prod.sold,
+  }));
 
-//   res.json({
-//     cod,
-//     online,
-//     data,
-//   });
-// });
+  res.json({
+    cod,
+    online,
+    data,
+  });
+});
